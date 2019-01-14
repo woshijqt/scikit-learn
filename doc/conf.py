@@ -32,7 +32,7 @@ import sphinx_gallery
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     'sphinx.ext.autodoc', 'sphinx.ext.autosummary',
-    'numpydoc',
+    'custom_files_autosummary', 'numpydoc',
     'sphinx.ext.linkcode', 'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.imgconverter',
@@ -226,6 +226,16 @@ latex_logo = "logos/scikit-learn-logo.png"
 
 # If false, no module index is generated.
 latex_domain_indices = False
+
+# Configure custom autosummary to add a suffix to modules that overlap with
+# a upper case module, i.e. `sklearn.cluster.DBSCAN` and
+# `sklearn.cluster.dbscan`
+custom_autosummary_file_map = {
+    "sklearn.cluster.dbscan": "sklearn.cluster.dbscan-lowercase",
+    "sklearn.cluster.optics": "sklearn.cluster.optics-lowercase",
+    "sklearn.decomposition.fastica": "sklearn.decomposition.fastica-lowercase",
+    "sklearn.covariance.oas": "sklearn.covariance.oas-lowercase",
+}
 
 trim_doctests_flags = True
 
