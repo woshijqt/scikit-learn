@@ -817,27 +817,18 @@ cdef int partition_node_indices(DTYPE_t* data,
         integer exit status.  On return, the contents of node_indices are
         modified as noted above.
     """
-    cdef ITYPE_t left, right, midindex, i
-    cdef DTYPE_t d1, d2
-    left = 0
-    right = n_points - 1
-
-    while True:
-        midindex = left
-        for i in range(left, right):
-            d1 = data[node_indices[i] * n_features + split_dim]
-            d2 = data[node_indices[right] * n_features + split_dim]
-            if d1 < d2:
-                swap(node_indices, i, midindex)
-                midindex += 1
-        swap(node_indices, midindex, right)
-        if midindex == split_index:
-            break
-        elif midindex < split_index:
-            left = midindex + 1
-        else:
-            right = midindex - 1
-
+    cdef ITYPE_t[2] shape
+    shape[0] = n_points
+    shape[1] = n_features
+    cdef np.ndarray data_npy = np.PyArray_SimpleNewFromData(2, &shape[0],
+                                                            np.NPY_DOUBLE,
+                                                            data)
+    cdef np.ndarray order = np.argpartition(data_npy[:, split_dim],
+                                            split_index)
+    cdef np.ndarray indices_npy = np.PyArray_SimpleNewFromData(1, &shape[0],
+                                                               np.NPY_INTP,
+                                                               node_indices)
+    np.take(indices_npy, order, out=indices_npy, mode='clip')
     return 0
 
 
